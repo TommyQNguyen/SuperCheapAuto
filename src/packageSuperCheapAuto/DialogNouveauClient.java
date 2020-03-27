@@ -3,8 +3,6 @@ package packageSuperCheapAuto;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -36,23 +34,6 @@ public class DialogNouveauClient extends JDialog {
 	private JButton btnOk;
 	private JButton btnAnnuler;
 	private PanelCarteDeMembre panelCarteDeMembre;
-
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					DialogNouveauClient dialog = new DialogNouveauClient();
-//					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//					dialog.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the dialog.
@@ -109,17 +90,14 @@ public class DialogNouveauClient extends JDialog {
 		btnAnnuler = new JButton("Annuler");
 		btnAnnuler.setBounds(250, 122, 85, 42);
 		getContentPane().add(btnAnnuler);
-		btnAnnuler.addActionListener(new ActionListener() {
+		btnAnnuler.addActionListener(new ActionListener() {									// Click sur bouton Annuler = fermeture du JDialog
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			dispose();
+			dispose();																		
 			}
 		});
 		
-
-		// Lire des données provenant du fichier Excel  
-		// Créer un flux de lecture
-
+		// Ajout d'un ecouteur pour le bouton OK pour creation d'un nouveau client, et l'enregister dans fichier Excel
 		btnOk.addActionListener(new ActionListener() {
 
 			@Override
@@ -127,29 +105,36 @@ public class DialogNouveauClient extends JDialog {
 				try {
 					InputStream inp = new FileInputStream ( "Clients.xlsx");
 					XSSFWorkbook classeur = ( XSSFWorkbook ) WorkbookFactory.create(inp);
-					XSSFSheet feuille = classeur.getSheetAt(0); 			// Feuille commence a 0, alors chercher Feuille 1 
+					XSSFSheet feuille = classeur.getSheetAt(0); 									// Feuille commence a 0, alors chercher Feuille 1 
 
-					// Modifier le contenu d'une cellule vide ( 25 dans la cellule G3 )
-					XSSFRow nouvelleRangee = feuille.createRow(feuille.getPhysicalNumberOfRows());
-					XSSFCell nouvelleCelluleNumeroCarteMembre = nouvelleRangee.createCell(0);
-					XSSFCell nouvelleCelluleNomClient = nouvelleRangee.createCell(1);
+					// Pour identifier les cellules appropries a chaque champ Numero carte, Nom, etc.
+					XSSFRow nouvelleRangee = feuille.createRow(feuille.getPhysicalNumberOfRows());	// Cree nouvelle rangee apres nombre de rangees existantes
+					XSSFCell nouvelleCelluleNumeroCarteMembre = nouvelleRangee.createCell(0);		// Associe aux cellules appropries 0 1 2 3
+					XSSFCell nouvelleCelluleNomClient = nouvelleRangee.createCell(1);				// Voir fichier Excel pour reference
 					XSSFCell nouvelleCellulePointsBonis = nouvelleRangee.createCell(2);
 					XSSFCell nouvelleCelluleSoldeCredit = nouvelleRangee.createCell(3);
 
+					// Transcrire les donnees entrees par usager du nouveau client dans le fichier Excel
 					nouvelleCelluleNumeroCarteMembre.setCellValue(textField_numeroCarteMembreGenere.getText());
 					nouvelleCellulePointsBonis.setCellValue(0);  
 					nouvelleCelluleNomClient.setCellValue(textField_nomDuClientNouveau.getText());
 					nouvelleCelluleSoldeCredit.setCellValue(0.0);
 					
+					// Variable String pour le numero de la carte membre, qui sera la cle pour acceder au HashMap
 					String nouveauNumeroCarteMembre = textField_numeroCarteMembreGenere.getText();
-					String nouveauNomDuClient = textField_nomDuClientNouveau.getText();
+//					int nouveauNombrePointsBonis = nouvelleCellulePointsBonis.getNumericCellValue();
 
 					Clients.ajouterClient(new Client(textField_numeroCarteMembreGenere.getText(), 	// Ajout du nouveau client aussi dans la HashMap
 							textField_nomDuClientNouveau.getText(),
 							0, 
 							0.0));
 					
-//					panelCarteDeMembre.getTextfieldNumeroCarteMembre().setText(nouveauNumeroCarteMembre);
+					// Selectionne automatiquement nouveau client dans champs appropries de fenetre principale
+					// Methode statique woohoo!!
+					PanelCarteDeMembre.setTextfieldNumeroCarteMembre(Clients.getListe().get(nouveauNumeroCarteMembre).getNumeroClient());
+					PanelCarteDeMembre.setTextfieldNomDuClient(Clients.getListe().get(nouveauNumeroCarteMembre).getNom());
+					PanelCarteDeMembre.setTextfieldNbPointsBonis(Clients.getListe().get(nouveauNumeroCarteMembre).getPointsBonis());
+
 
 					// Utiliser un flux d'écriture pour enregistrer les changements 
 					OutputStream out = new FileOutputStream ( "Clients.xlsx");
@@ -157,17 +142,16 @@ public class DialogNouveauClient extends JDialog {
 					out.close();
 					inp.close();
 				}
+				
 				catch ( Exception f)
 				{
 					f.printStackTrace();
 				}
 
 				dispose();
-//				panelCarteDeMembre.getTextfieldNumeroCarteMembre().setText(nouveau);
 			}
 
 	        });
-
 	}
 }
 

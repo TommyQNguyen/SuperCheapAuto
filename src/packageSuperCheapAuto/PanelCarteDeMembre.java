@@ -5,12 +5,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -21,27 +15,20 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-
 public class PanelCarteDeMembre extends JPanel 
 {
 	private JLabel lblNumeroCarteMembre;
 	private JLabel lblNomDuClient;
 	private JLabel lblNombreDePointsBonis;
-	private JTextField textField_numeroCarteMembre;
-	private JTextField textField_nomDuClient;
-	private JTextField textField_nombrePointsBonis;
+	private static JTextField textField_numeroCarteMembre;
+	private static JTextField textField_nomDuClient;
+	private static JTextField textField_nombrePointsBonis;
 	private static final String ACTION_ENTER = "entrer";
+	private Clients clients;		// Initialise une instance pour ensuite appeler le constructeur quelques lignes apres
 
 	public PanelCarteDeMembre() 
 	{
+		clients = new Clients();	// Initialisation du constructeur de Clients() pour importer les donnees Excel
 		setLayout(null);
 		setBorder(new LineBorder(new Color(0, 0, 0), 3));
 		setBackground(Color.GREEN);
@@ -78,75 +65,10 @@ public class PanelCarteDeMembre extends JPanel
 		add(textField_nombrePointsBonis);
 		textField_nombrePointsBonis.setColumns(10);
 		textField_nombrePointsBonis.setEditable(false);
-		
-		
-		
-				
-		// Lire des données provenant du fichier Excel  
-        // Créer un flux de lecture
-        try
-        {
-        InputStream inputStream = new FileInputStream ( "Clients.xlsx");
-        XSSFWorkbook classeur = ( XSSFWorkbook ) WorkbookFactory.create(inputStream);
-        XSSFSheet feuille = classeur.getSheetAt(0); 				// Feuille commence a 0, alors chercher Feuille 1 
-        XSSFRow rangee = feuille.getRow(1); 						// Valeur rangee = Premier rangee de la feuille
-        XSSFCell cellule  = rangee.getCell(0); 						// Valeur cellule = chercher la premiere cellule de la valeur rangee
         
-        int nombreDeClients = feuille.getPhysicalNumberOfRows() - 1;//Returns the number of physically defined rows (NOT the number of rows in the sheet)
-        															//Moins 1 pour ne pas compter la rangee du titre dans le fichier Excel
-        
-        for (int i = 1; i < nombreDeClients; i++) {
-			        	
-        	rangee = feuille.getRow(i);
-        	cellule = rangee.getCell(0);
- 
-        	//Conversion de cellule type NUMERIC a STRING
-        	//https://stackoverflow.com/questions/39993683/alternative-to-deprecated-getcelltype
-        	cellule.setCellType(CellType.STRING);
-        	//System.out.println(cellule);
-        	
-        	//Conversion de type XSSF Cell a String
-        	DataFormatter dataFormatter = new DataFormatter();
-        	String numeroClient = dataFormatter.formatCellValue(cellule);
-        	String nomClient = dataFormatter.formatCellValue(rangee.getCell(1));
-        	
-        	//Conversion de XSSFCell avec la methode statique parseInt
-        	int nombrePointsBonis = Integer.parseInt(dataFormatter.formatCellValue(rangee.getCell(2)));
-        	
-        	//Conversion de XSSFCell avec la methode statique parseDouble
-        	
-//        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-//        	System.out.println(numberFormat.format(number));
-        	double soldeCarteCredit = Double.parseDouble(dataFormatter.formatCellValue(rangee.getCell(3)));
-        	
-        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-
-//        	decimalFormat.format(soldeCarteCredit);
-//        	System.out.println(decimalFormat.format(0.0));
-        	        	
-        	Clients.ajouterClient(new Client(numeroClient, nomClient, nombrePointsBonis, soldeCarteCredit));
-        	
-//        	System.out.println(Clients.getListe().get(numeroClient).getSoldeCarteCredit());
-        	
-        	
-		}
-               
-        // utiliser un flux d'écriture pour enregistrer les changements 
-        OutputStream out = new FileOutputStream ( "Clients.xlsx");
-        classeur.write(out);  
-        out.close();
-        inputStream.close();
-          
-        }
-        catch ( Exception f)
-        {
-          f.printStackTrace();
-        }
-        
-        
-		// KeyStroke avec KeyEvent et une classe AbstractAction
+		// Permet de faire une action apres avoir appuye sur Enter
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK), ACTION_ENTER);
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK), ACTION_ENTER); 
 		getActionMap().put(ACTION_ENTER, new Ecouteur(ACTION_ENTER));
        
 		textField_numeroCarteMembre.addActionListener(new Ecouteur(ACTION_ENTER));
@@ -166,29 +88,30 @@ public class PanelCarteDeMembre extends JPanel
 			
 			String cleNumeroCarteMembre = textField_numeroCarteMembre.getText();
 			
-			if (Clients.getListe().containsKey(cleNumeroCarteMembre)) {
-			textField_nomDuClient.setText(Clients.getListe().get(cleNumeroCarteMembre).getNom());			
+			if (Clients.getListe().containsKey(cleNumeroCarteMembre)) {								// Si le numero de carte de membre entree existe
+			textField_nomDuClient.setText(Clients.getListe().get(cleNumeroCarteMembre).getNom());	// Remplir les champs Nom et Point(s) bonis		
 			textField_nombrePointsBonis.setText(String.valueOf(Clients.getListe().get(cleNumeroCarteMembre).getPointsBonis()));
 			}
-			else if (Clients.getListe().containsKey(cleNumeroCarteMembre) != true) {
-				JOptionPane.showMessageDialog(null, "Ce numero n'existe pas.");
-				textField_numeroCarteMembre.setText("");
+			else if (Clients.getListe().containsKey(cleNumeroCarteMembre) != true) {				// Si le numero de carte n'existe PAS
+				JOptionPane.showMessageDialog(null, "Ce numero n'existe pas.");						// Afficher message d'erreur
+				textField_numeroCarteMembre.setText("");											// Effacer le numero non-existant du champ
 			}			
 		}
 	}
 	
-	public JTextField getTextfieldNumeroCarteMembre () {
-		return textField_numeroCarteMembre;
+	
+	public static void setTextfieldNumeroCarteMembre (String numeroCarteMembre) {	// Methodes setTextField pour selectionner nouveau client
+		textField_numeroCarteMembre.setText(numeroCarteMembre);						//  apres l'avoir cree a partir de la classe DialogNouveauClient
 	}
 	
-	public JTextField getTextfieldNomDuClient () {
-		return textField_nomDuClient;
+	public static void setTextfieldNomDuClient (String nomDuClient) {
+		textField_nomDuClient.setText(nomDuClient);
 	}
 	
-	public JTextField getTextfieldNombrePointsBonis () {
-		return textField_nombrePointsBonis;
-	}
 	
+	public static void setTextfieldNbPointsBonis (int nombrePointsBonis) {
+		textField_nombrePointsBonis.setText(String.valueOf(nombrePointsBonis));		// Conversion de int en String pour le JTextField
+	}
 	
 	}
 	

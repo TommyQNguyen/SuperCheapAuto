@@ -11,9 +11,6 @@ public class PanelSuperCheapAuto extends JPanel {
 	private PanelBoutonsAchatTerminer panelBoutonsAchatTerminer;
 
 
-	/**
-	 * Create the panel.
-	 */
 	public PanelSuperCheapAuto() {
 
 		setSize(455, 551);
@@ -28,15 +25,28 @@ public class PanelSuperCheapAuto extends JPanel {
 		panelBoutonsAchatTerminer = new PanelBoutonsAchatTerminer();
 		add(panelBoutonsAchatTerminer);
 		
-		// initialize a Random object somewhere; you should only need one
+		//A EFFACER ces tests apres lol :P
+		// Initialise un objet random a qqpart; un est suffisant
 		Random random = new Random();
 
-		// generate a random integer from 0 to 899, then add 100
+		// Genere un int random de 0 a 899999, et ajoute 100000 ensuite
 		int x = random.nextInt(899999) + 100000;
 		System.out.println(x);
 		
-		
+		// Méthode keySet retourne un Set de toutes les clés (ici Set<String>)
+		System.out.println("hashmap.keySet() : ");
 
+		Inventaire inv = new Inventaire();
 		
+		var ensembleCles = Inventaire.getListe().keySet();
+		for (var cle : ensembleCles)
+			System.out.println(cle); // for amélioré, Set met en oeuvre l’interface Iterable
+		
+		// Méthode values retourne une Collection de toutes les valeurs (ici Collection<Point>)
+		System.out.println("hashmap.values() : ");
+		var ensembleValeurs = Inventaire.getListe().values();
+		for (var valeur : ensembleValeurs)
+			System.out.println(valeur.getNom()); // for amélioré, Set met en oeuvre l’interface Iterable
+
 	}
 }
