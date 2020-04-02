@@ -83,5 +83,9 @@ public class Inventaire {
 	public static void ajouterProduit(Produit produit) {
 		listeProduits.put(produit.getNom(), produit);		// Prend le nom du produit pour en faire la cle
 	}
+	
+//	public void reduireQuantiteEnStock(String cle) {
+//		Inventaire.getListe().get(cle).get
+//	}
 
 }

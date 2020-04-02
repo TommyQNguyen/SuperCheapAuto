@@ -30,5 +30,7 @@ public class Item {
 	public String toString() {
 		return this.nomProduit + "\r" + this.quantite + "\r" + getProduit().getPrix() * this.quantite;
 	}
+	
+
 
 }

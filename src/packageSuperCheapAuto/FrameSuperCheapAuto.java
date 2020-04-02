@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 public class FrameSuperCheapAuto extends JFrame {
@@ -35,7 +36,7 @@ public class FrameSuperCheapAuto extends JFrame {
 	 * Create the frame.
 	 */
 	public FrameSuperCheapAuto() {
-		setBounds(100, 100, 471, 551);
+		setBounds(100, 100, 471, 610);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		PanelSuperCheapAuto panelSuperCheapAuto = new PanelSuperCheapAuto();
@@ -61,9 +62,11 @@ public class FrameSuperCheapAuto extends JFrame {
 
 
 				// Exemple de popup complexe personnalisable
+				
 				var dialog = new DialogNouveauClient(FrameSuperCheapAuto.this, "Inscription d'un nouveau Client", true);
 				dialog.setLocationRelativeTo(FrameSuperCheapAuto.this);
 				dialog.setVisible(true);
+			
 
 //				getContentPane().setBackground(Color.red);
 			}

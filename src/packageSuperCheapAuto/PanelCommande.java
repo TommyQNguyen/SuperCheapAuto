@@ -16,11 +16,11 @@ public class PanelCommande extends JPanel {
 	
 	private JLabel lblCommande;
 	private JLabel lblArticle;
-	private JComboBox<String> comboBoxArticle;
+	private static JComboBox<String> comboBoxArticle;
 	private JLabel lblPrixUnitaire;
 	private JTextField textField_prixUnitaire;
 	private JLabel lblQuantiteEnStock;
-	private JTextField textField_quantiteEnStock;
+	private static JTextField textField_quantiteEnStock;
 	Inventaire inventaire;
 
 	/**
@@ -43,7 +43,7 @@ public class PanelCommande extends JPanel {
 		lblArticle.setBounds(10, 32, 52, 15);
 		add(lblArticle);
 		
-		comboBoxArticle = new JComboBox();
+		comboBoxArticle = new JComboBox<String>();
 		comboBoxArticle.setBounds(78, 30, 172, 21);
 		add(comboBoxArticle);
 		inventaire = new Inventaire();								// Constructeur et initialisation
@@ -86,4 +86,16 @@ public class PanelCommande extends JPanel {
 			}
 		});
 	}
+	
+	public static JComboBox<String> getComboBoxArticle() {
+		
+		return comboBoxArticle;
+	}
+	
+	public static JTextField getTextfieldQteStock() {
+		
+		return textField_quantiteEnStock;
+	}
+	
+	
 }

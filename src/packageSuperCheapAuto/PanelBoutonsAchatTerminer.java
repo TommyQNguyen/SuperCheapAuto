@@ -9,8 +9,8 @@ import javax.swing.border.LineBorder;
 
 public class PanelBoutonsAchatTerminer extends JPanel {
 
-	private JButton btnAchat;
-	private JButton btnTerminer;
+	private static JButton btnAchat;
+	private static JButton btnTerminer;
 
 	public PanelBoutonsAchatTerminer() 
 	{
@@ -28,4 +28,13 @@ public class PanelBoutonsAchatTerminer extends JPanel {
 		btnTerminer.setBounds(10, 69, 136, 57);
 		add(btnTerminer);
 	}
+	
+	public static JButton getJButtonBtnAchat () {
+		return btnAchat;
+	}
+	
+	public static JButton getJButtonBtnTerminer () {
+		return btnTerminer;
+	}
+	
 }

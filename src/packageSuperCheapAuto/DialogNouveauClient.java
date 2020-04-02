@@ -2,6 +2,7 @@ package packageSuperCheapAuto;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import java.awt.Frame;

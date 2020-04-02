@@ -84,13 +84,15 @@ public class PanelCarteDeMembre extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			setBackground(Color.PINK);
+			setBackground(Color.PINK); // A enlever
 			
 			String cleNumeroCarteMembre = textField_numeroCarteMembre.getText();
 			
 			if (Clients.getListe().containsKey(cleNumeroCarteMembre)) {								// Si le numero de carte de membre entree existe
 			textField_nomDuClient.setText(Clients.getListe().get(cleNumeroCarteMembre).getNom());	// Remplir les champs Nom et Point(s) bonis		
 			textField_nombrePointsBonis.setText(String.valueOf(Clients.getListe().get(cleNumeroCarteMembre).getPointsBonis()));
+			PanelPaiement.setCommande(new Commande(cleNumeroCarteMembre));							// Initialise constructeur pour initialiser le vecteur
+																									// d'Items
 			}
 			else if (Clients.getListe().containsKey(cleNumeroCarteMembre) != true) {				// Si le numero de carte n'existe PAS
 				JOptionPane.showMessageDialog(null, "Ce numero n'existe pas.");						// Afficher message d'erreur
@@ -108,10 +110,20 @@ public class PanelCarteDeMembre extends JPanel
 		textField_nomDuClient.setText(nomDuClient);
 	}
 	
-	
 	public static void setTextfieldNbPointsBonis (int nombrePointsBonis) {
 		textField_nombrePointsBonis.setText(String.valueOf(nombrePointsBonis));		// Conversion de int en String pour le JTextField
 	}
+	
+	public static String getNumeroCarteMembre() {
+		
+		return textField_numeroCarteMembre.getText();
+	}
+	
+//	public Commande getCommandeTemporaire() {
+//		
+//		return commandeTemporaire;
+//	}
+	
 	
 	}
 	
