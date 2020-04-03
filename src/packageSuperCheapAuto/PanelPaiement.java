@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -34,6 +35,7 @@ public class PanelPaiement extends JPanel {
 	static Commande commande;
 	PanelCarteDeMembre panelCarteDeMembre;	// Pour utiliser le getCommande de PanelCarteDeMembre et attribuer son constructeur et la valeur
 											// de l'objet getCommande a commande dans ce panel-ci. 
+	DecimalFormat decimalFormat = new DecimalFormat("#.00");	// Pour mettre le calcul du prix a 2 decimales 
 
 	public PanelPaiement() {
 
@@ -113,8 +115,7 @@ public class PanelPaiement extends JPanel {
 		modele.addRow(new Object[] { "Andreanne", "AAA", 88 });
 		modele.addRow(new Object[] { "Denise", "DDD", 55 });
 		
-//		commande = panelCarteDeMembre.getCommandeTemporaire(); // A tester..? 
-		
+		// L'ecouteur du bouton Achat 
 		PanelBoutonsAchatTerminer.getJButtonBtnAchat().addActionListener(new ActionListener() {
 
 			@Override
@@ -138,29 +139,67 @@ public class PanelPaiement extends JPanel {
 			System.out.println("numero client: " + commande.getNumeroClient());
 			System.out.println("numero commande: " + commande.getNumeroCommande());
 			System.out.println("quantite en stock de hashmap produit: " + Inventaire.getListe().get(cleProduit).getQteStock());
-			
-			
-
 			}
 		});
 		
+		
+		// L'ecouteur du bouton Terminer
 		PanelBoutonsAchatTerminer.getJButtonBtnTerminer().addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				//test pour voir contenu du vecteur entier sur click du bouton Terminer
-			for (int i = 0; i < commande.getItems().size(); i++) {
-				System.out.println("nom du produit dans vecteur: " + commande.getItems().elementAt(i).getNomProduit());
-				System.out.println("quantite commandee dans vecteur: " + commande.getItems().elementAt(i).getQuantite());
-				System.out.println("numero commande associe dans vecteur: " + commande.getItems().elementAt(i).getNumeroCommandeAssociee());
-//				System.out.println(commande.getItems().elementAt(i).toString());
-
-			}
-
+//	        	DecimalFormat decimalFormat = new DecimalFormat("#.00");	// Pour mettre le calcul du prix a 2 decimales 
+	        	
+	        	// Ajout de Sous-total et Grand total dans la JTable
+				modele.addRow(new Object[] {"Sous-total", null , decimalFormat.format(commande.calculerSousTotal())});
+				modele.addRow(new Object[] {"Grand total", null , decimalFormat.format(commande.calculerGrandTotal())});
 			}
 		});
 		
+		// Ecouteur pour le bouton radio paiement credit
+		rdbtnPaiementCredit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				textField_MontantDonne.setEditable(false); 	// Si on choisit Crédit, les champs texte pour 
+				textField_MontantRemis.setEditable(false);	// entrer le paiement et le change deviennent inutilisables
+			}
+		});
+		
+		// Ecouteur pour le bouton radio paiement comptant
+		rdbtnPaiementComptant.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				textField_MontantDonne.setEditable(true);	// Si on choisit Comptant, les champs texte pour  
+				textField_MontantRemis.setEditable(true);	// entrer le paiement et le change deviennent utilisables
+			}
+		});
+		
+		btnPayez.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				double montantDonneParClient = Double.parseDouble(textField_MontantDonne.getText());
+				double differenceMontantDonneRemis;
+				
+				if (montantDonneParClient >= commande.calculerGrandTotal()) { // Si le montant entre est superieur au total de la facture
+					
+					differenceMontantDonneRemis = montantDonneParClient - commande.calculerGrandTotal(); // Variable pour remise du change
+					
+					textField_MontantRemis.setText(
+							String.valueOf(decimalFormat.format(differenceMontantDonneRemis))); // Affiche le montant a remettre 
+					
+					// Utiliser methodes dans classe Client 
+					
+					
+				}
+				
+				
+			}
+		});
+		
+
 	}
 	
 	public static void setCommande(Commande commandeTemporaire) {
