@@ -21,6 +21,10 @@ public class Clients {
 	
 	public Clients() {
 
+		initFeuilleExcelClient();
+	}
+	
+	public static void initFeuilleExcelClient () {
         try
         {
         InputStream inputStream = new FileInputStream ( "Clients.xlsx");
@@ -56,13 +60,10 @@ public class Clients {
         	double soldeCarteCredit = Double.parseDouble(dataFormatter.formatCellValue(rangee.getCell(3)));
         	
         	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-
-//        	decimalFormat.format(soldeCarteCredit);
-//        	System.out.println(decimalFormat.format(0.0));
         	        	
         	Clients.ajouterClient(new Client(numeroClient, nomClient, nombrePointsBonis, soldeCarteCredit));
         	
-//        	System.out.println(Clients.getListe().get(numeroClient).getSoldeCarteCredit());
+
         	
 		}
                

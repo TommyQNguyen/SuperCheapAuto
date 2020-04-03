@@ -63,7 +63,7 @@ public class FrameSuperCheapAuto extends JFrame {
 
 				// Exemple de popup complexe personnalisable
 				
-				var dialog = new DialogNouveauClient(FrameSuperCheapAuto.this, "Inscription d'un nouveau Client", true);
+				var dialog = new DialogNouveauClient(FrameSuperCheapAuto.this, "Inscription d'un nouveau client", true);
 				dialog.setLocationRelativeTo(FrameSuperCheapAuto.this);
 				dialog.setVisible(true);
 			
@@ -71,5 +71,13 @@ public class FrameSuperCheapAuto extends JFrame {
 //				getContentPane().setBackground(Color.red);
 			}
 		});
+		
+		JMenuItem menuItemFermetureSession = new JMenuItem("Fermeture de session");
+		menuItemFermetureSession.setMnemonic(KeyEvent.VK_F);
+		menuItemFermetureSession.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+		menuOptions.add(menuItemFermetureSession);
+		
+		
 	}
 }

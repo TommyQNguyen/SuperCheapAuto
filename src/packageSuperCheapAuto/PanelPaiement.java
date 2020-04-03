@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -33,6 +35,8 @@ public class PanelPaiement extends JPanel {
 	private JButton btnPayez;
 	private JButton btnAnnulerCommande;
 	static Commande commande;
+
+	
 	PanelCarteDeMembre panelCarteDeMembre;	// Pour utiliser le getCommande de PanelCarteDeMembre et attribuer son constructeur et la valeur
 											// de l'objet getCommande a commande dans ce panel-ci. 
 	DecimalFormat decimalFormat = new DecimalFormat("#.00");	// Pour mettre le calcul du prix a 2 decimales 
@@ -49,9 +53,6 @@ public class PanelPaiement extends JPanel {
 		add(scrollPaneFacture);
 		table = new JTable();
 		scrollPaneFacture.setViewportView(table);
-		
-		// Remplir le JScrollPane au complet avec du blanc
-		// table.setFillsViewportHeight(true);
 
 		modele = new DefaultTableModel();
 		modele.addColumn("Produit");
@@ -111,9 +112,6 @@ public class PanelPaiement extends JPanel {
 		btnAnnulerCommande.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnAnnulerCommande.setBounds(292, 211, 133, 40);
 		add(btnAnnulerCommande);
-		// Ajouter des elements
-		modele.addRow(new Object[] { "Andreanne", "AAA", 88 });
-		modele.addRow(new Object[] { "Denise", "DDD", 55 });
 		
 		// L'ecouteur du bouton Achat 
 		PanelBoutonsAchatTerminer.getJButtonBtnAchat().addActionListener(new ActionListener() {
@@ -147,8 +145,6 @@ public class PanelPaiement extends JPanel {
 		PanelBoutonsAchatTerminer.getJButtonBtnTerminer().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-//	        	DecimalFormat decimalFormat = new DecimalFormat("#.00");	// Pour mettre le calcul du prix a 2 decimales 
 	        	
 	        	// Ajout de Sous-total et Grand total dans la JTable
 				modele.addRow(new Object[] {"Sous-total", null , decimalFormat.format(commande.calculerSousTotal())});
@@ -180,24 +176,67 @@ public class PanelPaiement extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				if (rdbtnPaiementComptant.isSelected()) {
+
 				double montantDonneParClient = Double.parseDouble(textField_MontantDonne.getText());
 				double differenceMontantDonneRemis;
+//				int pointsBonisAccumules;
+//				
+//				for (int i = 0; i < commande.getItems().size(); i++) {
+//					int pointsBonisAccumules = commande.getItems().elementAt(i).getProduit().getPoints();
+//					Clients.getClient(commande.getNumeroClient()).ajouterPointsBonis(pointsBonisAccumules); 
+//				}
+				System.out.println("points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 				
-				if (montantDonneParClient >= commande.calculerGrandTotal()) { // Si le montant entre est superieur au total de la facture
+					if (Clients.getClient(commande.getNumeroClient()).assezArgent(commande, montantDonneParClient) == true) {
 					
-					differenceMontantDonneRemis = montantDonneParClient - commande.calculerGrandTotal(); // Variable pour remise du change
-					
-					textField_MontantRemis.setText(
-							String.valueOf(decimalFormat.format(differenceMontantDonneRemis))); // Affiche le montant a remettre 
-					
-					// Utiliser methodes dans classe Client 
-					
-					
+						differenceMontantDonneRemis = Clients.getClient(commande.getNumeroClient()).payerCommandeComptant(commande, montantDonneParClient);
+						
+						textField_MontantRemis.setText(String.valueOf(differenceMontantDonneRemis));
+					}
+					else if (Clients.getClient(commande.getNumeroClient()).assezArgent(commande, montantDonneParClient) == false) {
+						JOptionPane.showMessageDialog(null, "Pas assez d'argent comptant!!");
+					}
 				}
+				else if (rdbtnPaiementCredit.isSelected()) {
 				
-				
+					if (Clients.getClient(commande.getNumeroClient()).payerCommandeCarteCredit(commande) == true) {
+						JOptionPane.showMessageDialog(null, "Merci pour votre argent!");
+						commande.setPayee(true); 									// Paiement de cette commande a ete paye!!
+					}
+					else if (Clients.getClient(commande.getNumeroClient()).payerCommandeCarteCredit(commande) == false) {
+						JOptionPane.showMessageDialog(null, "Limite credit depassee.");
+					}	
+				}			
 			}
 		});
+		
+		btnAnnulerCommande.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (commande.estPayee() == true) {
+					PanelCarteDeMembre.setTextfieldNumeroCarteMembre("");	// Vide les champs client
+					PanelCarteDeMembre.setTextfieldNomDuClient("");
+					PanelCarteDeMembre.setTextfieldNbPointsBonis(0);
+					
+					modele.setRowCount(0); 									// Vide La JTable 
+					
+					textField_MontantDonne.setText("");						// Vide les champs de paiement
+					textField_MontantRemis.setText("");
+										
+				}
+				else if (commande.estPayee() == false) {
+					
+					commande.getItems().clear();							// Vide le vecteur d'Items
+					modele.setRowCount(0);									// Vide la JTable avec la facture
+					Inventaire.initFeuilleExcelProduit();					// Remet les produits dans l'inventaire
+					Clients.initFeuilleExcelClient();						// Si jamais le client ne veut pas qu'on garde ses donnees
+				}
+			}
+		});
+		
+		
 		
 
 	}
