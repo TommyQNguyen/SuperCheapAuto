@@ -91,6 +91,7 @@ public class PanelCarteDeMembre extends JPanel
 			if (Clients.getListe().containsKey(cleNumeroCarteMembre)) {								// Si le numero de carte de membre entree existe
 			textField_nomDuClient.setText(Clients.getListe().get(cleNumeroCarteMembre).getNom());	// Remplir les champs Nom et Point(s) bonis		
 			textField_nombrePointsBonis.setText(String.valueOf(Clients.getListe().get(cleNumeroCarteMembre).getPointsBonis()));
+			
 			PanelPaiement.setCommande(new Commande(cleNumeroCarteMembre));							// Initialise constructeur pour initialiser le vecteur
 																									// d'Items
 			}
@@ -118,12 +119,6 @@ public class PanelCarteDeMembre extends JPanel
 		
 		return textField_numeroCarteMembre.getText();
 	}
-	
-//	public Commande getCommandeTemporaire() {
-//		
-//		return commandeTemporaire;
-//	}
-	
 	
 	}
 	

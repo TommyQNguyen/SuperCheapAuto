@@ -124,12 +124,13 @@ public class PanelPaiement extends JPanel {
 			double prixItem = Inventaire.getListe().get(cleProduit).getPrix();	
 			final int quantiteAchetee = 1;														// Quand client ajoute un produit dans la liste
 			
-			if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(1)) {				// Si le nombre de produit acheter < produit en stock,
+			if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(quantiteAchetee)) {	// Si le nombre de produit acheter < produit en stock,
 				modele.addRow(new Object[] {cleProduit, quantiteAchetee , prixItem});			// ajouter une ligne dans la JTable
-				PanelCommande.getTextfieldQteStock().setText(String.valueOf(quantiteItem - 1));	// Changer le quantite en stock dans le GUI 
-				commande.ajouterItem(new Item(cleProduit, quantiteAchetee, commande.getNumeroCommande()));
+				PanelCommande.getTextfieldQteStock().setText(String.valueOf(quantiteItem - 1));	// Mettre a jour la quantite en stock du JTextField 
+				
+				commande.ajouterItem(new Item(cleProduit, quantiteAchetee, commande.getNumeroCommande())); // Ajouter l'item dans la commande	
 			}
-			else {
+			else if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(quantiteAchetee) == false) {
 				JOptionPane.showMessageDialog(null, "Ce produit est en rupture de stock.");		// Cas ou quantite achetee > quantite en stock
 			}
 
@@ -137,6 +138,7 @@ public class PanelPaiement extends JPanel {
 			System.out.println("numero client: " + commande.getNumeroClient());
 			System.out.println("numero commande: " + commande.getNumeroCommande());
 			System.out.println("quantite en stock de hashmap produit: " + Inventaire.getListe().get(cleProduit).getQteStock());
+			System.out.println("nombre points Bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 			}
 		});
 		
@@ -145,6 +147,7 @@ public class PanelPaiement extends JPanel {
 		PanelBoutonsAchatTerminer.getJButtonBtnTerminer().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("nombre points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 	        	
 	        	// Ajout de Sous-total et Grand total dans la JTable
 				modele.addRow(new Object[] {"Sous-total", null , decimalFormat.format(commande.calculerSousTotal())});
@@ -180,12 +183,7 @@ public class PanelPaiement extends JPanel {
 
 				double montantDonneParClient = Double.parseDouble(textField_MontantDonne.getText());
 				double differenceMontantDonneRemis;
-//				int pointsBonisAccumules;
-//				
-//				for (int i = 0; i < commande.getItems().size(); i++) {
-//					int pointsBonisAccumules = commande.getItems().elementAt(i).getProduit().getPoints();
-//					Clients.getClient(commande.getNumeroClient()).ajouterPointsBonis(pointsBonisAccumules); 
-//				}
+
 				System.out.println("points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 				
 					if (Clients.getClient(commande.getNumeroClient()).assezArgent(commande, montantDonneParClient) == true) {
@@ -193,6 +191,8 @@ public class PanelPaiement extends JPanel {
 						differenceMontantDonneRemis = Clients.getClient(commande.getNumeroClient()).payerCommandeComptant(commande, montantDonneParClient);
 						
 						textField_MontantRemis.setText(String.valueOf(differenceMontantDonneRemis));
+						JOptionPane.showMessageDialog(null, "Merci pour votre argent comptant!!");
+
 					}
 					else if (Clients.getClient(commande.getNumeroClient()).assezArgent(commande, montantDonneParClient) == false) {
 						JOptionPane.showMessageDialog(null, "Pas assez d'argent comptant!!");
@@ -202,15 +202,16 @@ public class PanelPaiement extends JPanel {
 				
 					if (Clients.getClient(commande.getNumeroClient()).payerCommandeCarteCredit(commande) == true) {
 						JOptionPane.showMessageDialog(null, "Merci pour votre argent!");
-						commande.setPayee(true); 									// Paiement de cette commande a ete paye!!
 					}
 					else if (Clients.getClient(commande.getNumeroClient()).payerCommandeCarteCredit(commande) == false) {
-						JOptionPane.showMessageDialog(null, "Limite credit depassee.");
+						JOptionPane.showMessageDialog(null, "Limite atteinte (2000.00$). Commande refusee.");
 					}	
 				}			
+				System.out.println("nb points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 			}
 		});
 		
+		// Ecouteur pour le bouton Annuler 
 		btnAnnulerCommande.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -235,10 +236,6 @@ public class PanelPaiement extends JPanel {
 				}
 			}
 		});
-		
-		
-		
-
 	}
 	
 	public static void setCommande(Commande commandeTemporaire) {

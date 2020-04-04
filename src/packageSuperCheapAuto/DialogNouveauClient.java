@@ -34,11 +34,7 @@ public class DialogNouveauClient extends JDialog {
 	private JTextField textField_numeroCarteMembreGenere;
 	private JButton btnOk;
 	private JButton btnAnnuler;
-	private PanelCarteDeMembre panelCarteDeMembre;
 
-	/**
-	 * Create the dialog.
-	 */
 	public DialogNouveauClient() {}
 	
 	public DialogNouveauClient(Frame frame, String title, boolean modal) {
@@ -123,7 +119,6 @@ public class DialogNouveauClient extends JDialog {
 					
 					// Variable String pour le numero de la carte membre, qui sera la cle pour acceder au HashMap
 					String nouveauNumeroCarteMembre = textField_numeroCarteMembreGenere.getText();
-//					int nouveauNombrePointsBonis = nouvelleCellulePointsBonis.getNumericCellValue();
 
 					Clients.ajouterClient(new Client(textField_numeroCarteMembreGenere.getText(), 	// Ajout du nouveau client aussi dans la HashMap
 							textField_nomDuClientNouveau.getText(),
@@ -131,11 +126,12 @@ public class DialogNouveauClient extends JDialog {
 							0.0));
 					
 					// Selectionne automatiquement nouveau client dans champs appropries de fenetre principale
-					// Methode statique woohoo!!
 					PanelCarteDeMembre.setTextfieldNumeroCarteMembre(Clients.getListe().get(nouveauNumeroCarteMembre).getNumeroClient());
 					PanelCarteDeMembre.setTextfieldNomDuClient(Clients.getListe().get(nouveauNumeroCarteMembre).getNom());
 					PanelCarteDeMembre.setTextfieldNbPointsBonis(Clients.getListe().get(nouveauNumeroCarteMembre).getPointsBonis());
-
+					
+					PanelPaiement.setCommande(new Commande(nouveauNumeroCarteMembre));				// Initialise constructeur pour initialiser le vecteur
+																									// d'Items
 
 					// Utiliser un flux d'écriture pour enregistrer les changements 
 					OutputStream out = new FileOutputStream ( "Clients.xlsx");
