@@ -36,7 +36,6 @@ public class PanelPaiement extends JPanel {
 	private JButton btnAnnulerCommande;
 	static Commande commande;
 
-	
 	PanelCarteDeMembre panelCarteDeMembre;	// Pour utiliser le getCommande de PanelCarteDeMembre et attribuer son constructeur et la valeur
 											// de l'objet getCommande a commande dans ce panel-ci. 
 	DecimalFormat decimalFormat = new DecimalFormat("#.00");	// Pour mettre le calcul du prix a 2 decimales 
@@ -108,7 +107,7 @@ public class PanelPaiement extends JPanel {
 		btnPayez.setBounds(292, 130, 133, 78);
 		add(btnPayez);
 		
-		btnAnnulerCommande = new JButton("Annuler");
+		btnAnnulerCommande = new JButton("Annuler/Nouvelle");
 		btnAnnulerCommande.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnAnnulerCommande.setBounds(292, 211, 133, 40);
 		add(btnAnnulerCommande);
@@ -152,6 +151,9 @@ public class PanelPaiement extends JPanel {
 	        	// Ajout de Sous-total et Grand total dans la JTable
 				modele.addRow(new Object[] {"Sous-total", null , decimalFormat.format(commande.calculerSousTotal())});
 				modele.addRow(new Object[] {"Grand total", null , decimalFormat.format(commande.calculerGrandTotal())});
+				var ensembleCles = Clients.getListe().keySet();
+				for (var cle : ensembleCles) 
+					System.out.println(cle); // for amélioré, Set met en oeuvre l’interface Iterable
 			}
 		});
 		

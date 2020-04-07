@@ -54,8 +54,6 @@ public class Inventaire {
 
         	quantiteEnStock = Integer.parseInt(dataFormatter.formatCellValue(celluleQteEnStock));
 
-//        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-//        	System.out.println(numberFormat.format(number));
         	coutDuProduit = Double.parseDouble(dataFormatter.formatCellValue(celluleCoutDuProduit));
 
         	nbDePointsDuProduit = Integer.parseInt(dataFormatter.formatCellValue(celluleNbDePointsProduit));
@@ -74,6 +72,50 @@ public class Inventaire {
 		{
 			f.printStackTrace();
 		}
+	}
+	
+	public static void sauvegarderExcelInventaire() {
+		
+        try
+        {
+        InputStream inputStream = new FileInputStream ( "Produits.xlsx");
+        XSSFWorkbook classeur = ( XSSFWorkbook ) WorkbookFactory.create(inputStream);
+        XSSFSheet feuille = classeur.getSheetAt(0); 				// Feuille commence a 0, alors chercher Feuille 0 
+        
+        int rangeeCourante = 1;										// Commence a la rangee apres le titre
+		XSSFRow nouvelleRangee = feuille.getRow(rangeeCourante);
+			
+			var ensembleCles = Inventaire.getListe().keySet();
+			for (var cle : ensembleCles) {
+				
+				nouvelleRangee = feuille.getRow(rangeeCourante);	// Rangee courante pour inscrire les nouvelles informations
+				rangeeCourante = rangeeCourante + 1;				// Incrementation de 1 pour l'information du prochai
+				
+				XSSFCell nouvelleCelluleCodeProduit = nouvelleRangee.getCell(0);
+				XSSFCell nouvelleCelluleNomProduit = nouvelleRangee.getCell(1);
+				XSSFCell nouvelleCelluleQuantiteStock = nouvelleRangee.getCell(2);
+				XSSFCell nouvelleCellulePrixProduit = nouvelleRangee.getCell(3);
+				XSSFCell nouvelleCellulePointsProduit = nouvelleRangee.getCell(4);
+
+				nouvelleCelluleCodeProduit.setCellValue(Inventaire.getProduit(cle).getCode());
+				nouvelleCelluleNomProduit.setCellValue(Inventaire.getProduit(cle).getNom());
+				nouvelleCelluleQuantiteStock.setCellValue(Inventaire.getProduit(cle).getQteStock());
+				nouvelleCellulePrixProduit.setCellValue(Inventaire.getProduit(cle).getPrix());
+				nouvelleCellulePointsProduit.setCellValue(Inventaire.getProduit(cle).getPoints());
+
+			}
+               
+        // Utiliser un flux d'écriture pour enregistrer les changements 
+        OutputStream out = new FileOutputStream ( "Produits.xlsx");
+        classeur.write(out);  
+        out.close();
+        inputStream.close();
+          
+        }
+        catch ( Exception f)
+        {
+          f.printStackTrace();
+        }
 	}
 
 	public static HashMap<String, Produit> getListe() {

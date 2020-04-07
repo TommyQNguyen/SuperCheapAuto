@@ -1,21 +1,6 @@
 package packageSuperCheapAuto;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Random;
-
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JRadioButton;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
 
 public class PanelSuperCheapAuto extends JPanel {
 
@@ -41,30 +26,5 @@ public class PanelSuperCheapAuto extends JPanel {
 		
 		panelPaiement = new PanelPaiement();
 		add(panelPaiement);
-		
-	
-		
-//		//A EFFACER ces tests apres lol :P
-//		// Initialise un objet random a qqpart; un est suffisant
-//		Random random = new Random();
-//
-//		// Genere un int random de 0 a 899999, et ajoute 100000 ensuite
-//		int x = random.nextInt(899999) + 100000;
-//		System.out.println(x);
-//		
-//		// Méthode keySet retourne un Set de toutes les clés (ici Set<String>)
-//		System.out.println("hashmap.keySet() : ");
-//
-//		Inventaire inv = new Inventaire();
-//		
-//		var ensembleCles = Inventaire.getListe().keySet();
-//		for (var cle : ensembleCles)
-//			System.out.println(cle); // for amélioré, Set met en oeuvre l’interface Iterable
-//		
-//		// Méthode values retourne une Collection de toutes les valeurs (ici Collection<Point>)
-//		System.out.println("hashmap.values() : ");
-//		var ensembleValeurs = Inventaire.getListe().values();
-//		for (var valeur : ensembleValeurs)
-//			System.out.println(valeur.getNom()); // for amélioré, Set met en oeuvre l’interface Iterable
 	}
 }

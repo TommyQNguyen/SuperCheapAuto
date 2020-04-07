@@ -52,19 +52,10 @@ public class Clients {
         	
         	//Conversion de XSSFCell avec la methode statique parseInt
         	int nombrePointsBonis = Integer.parseInt(dataFormatter.formatCellValue(rangee.getCell(2)));
-        	
-        	//Conversion de XSSFCell avec la methode statique parseDouble
-        	
-//        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-//        	System.out.println(numberFormat.format(number));
-        	double soldeCarteCredit = Double.parseDouble(dataFormatter.formatCellValue(rangee.getCell(3)));
-        	
-        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-        	        	
-        	Clients.ajouterClient(new Client(numeroClient, nomClient, nombrePointsBonis, soldeCarteCredit));
-        	
 
-        	
+        	double soldeCarteCredit = Double.parseDouble(dataFormatter.formatCellValue(rangee.getCell(3)));
+        	        	
+        	Clients.ajouterClient(new Client(numeroClient, nomClient, nombrePointsBonis, soldeCarteCredit));	
 		}
                
         // utiliser un flux d'écriture pour enregistrer les changements 
@@ -80,54 +71,36 @@ public class Clients {
         }
 	}
 	
-	public static void sauvegarderFeuilleExcel() {
+	public static void sauvegarderExcelClients() {
 		
         try
         {
         InputStream inputStream = new FileInputStream ( "Clients.xlsx");
         XSSFWorkbook classeur = ( XSSFWorkbook ) WorkbookFactory.create(inputStream);
-        XSSFSheet feuille = classeur.getSheetAt(0); 				// Feuille commence a 0, alors chercher Feuille 0 
+        XSSFSheet feuille = classeur.getSheetAt(0); 				// Feuille commence a 0, alors chercher feuille 0 
         
-        int nombreDeClients = feuille.getPhysicalNumberOfRows() - 1;//Returns the number of physically defined rows (NOT the number of rows in the sheet)
-        															//Moins 1 pour ne pas compter la rangee du titre dans le fichier Excel
-        
-        for (int i = 1; i < listeClients.size(); i++) {
-        	
-			XSSFRow nouvelleRangee = feuille.getRow(i);
-			XSSFCell nouvelleCelluleNumeroCarteMembre = nouvelleRangee.getCell(0);
-			XSSFCell nouvelleCelluleNomClient = nouvelleRangee.getCell(1);
-			XSSFCell nouvelleCellulePointsBonis = nouvelleRangee.getCell(2);
-			XSSFCell nouvelleCelluleSoldeCredit = nouvelleRangee.getCell(3);
+        int rangeeCourante = 1;										// Commence a la rangee 1, celle qui ne contient pas les titres
+		XSSFRow nouvelleRangee = feuille.getRow(rangeeCourante);
 			
-//			nouvelleCelluleNumeroCarteMembre.setCellValue(liste);
- 
-//        	//Conversion de cellule type NUMERIC a STRING
-//        	//https://stackoverflow.com/questions/39993683/alternative-to-deprecated-getcelltype
-////        	cellule.setCellType(CellType.STRING);
-//        	
-//        	//Conversion de type XSSF Cell a String
-//        	DataFormatter dataFormatter = new DataFormatter();
-//        	String numeroClient = dataFormatter.formatCellValue(cellule);
-//        	String nomClient = dataFormatter.formatCellValue(rangee.getCell(1));
-//        	
-//        	//Conversion de XSSFCell avec la methode statique parseInt
-//        	int nombrePointsBonis = Integer.parseInt(dataFormatter.formatCellValue(rangee.getCell(2)));
-//        	
-//        	//Conversion de XSSFCell avec la methode statique parseDouble
-//        	
-////        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-////        	System.out.println(numberFormat.format(number));
-//        	double soldeCarteCredit = Double.parseDouble(dataFormatter.formatCellValue(rangee.getCell(3)));
-//        	
-//        	DecimalFormat decimalFormat = new DecimalFormat("#.000000000");
-//        	        	
-//        	Clients.ajouterClient(new Client(numeroClient, nomClient, nombrePointsBonis, soldeCarteCredit));
-//        	
+			var ensembleCles = Clients.getListe().keySet();
+			for (var cleClient : ensembleCles) {
+				
+				nouvelleRangee = feuille.getRow(rangeeCourante);	// Rangee courante pour retranscrire les informations mise a jour
+				rangeeCourante = rangeeCourante + 1;				// Incrementation de 1 pour passer au prochain client
+				
+				XSSFCell nouvelleCelluleNumeroCarteMembre = nouvelleRangee.getCell(0);	// Associer une cellule particuliere a chaque
+				XSSFCell nouvelleCelluleNomClient = nouvelleRangee.getCell(1);			// type d'information client 
+				XSSFCell nouvelleCellulePointsBonis = nouvelleRangee.getCell(2);
+				XSSFCell nouvelleCelluleSoldeCredit = nouvelleRangee.getCell(3);
 
-        	
-		}
+				nouvelleCelluleNumeroCarteMembre.setCellValue(Clients.getClient(cleClient).getNumeroClient()); 		// Retranscrit dans chaque cellule
+				nouvelleCelluleNomClient.setCellValue(Clients.getClient(cleClient).getNom());						// les differents informations de
+				nouvelleCellulePointsBonis.setCellValue(Clients.getClient(cleClient).getPointsBonis());				// la HashMap listeClients
+				nouvelleCelluleSoldeCredit.setCellValue(Clients.getClient(cleClient).getSoldeCarteCredit());
+
+			}
                
-        // utiliser un flux d'écriture pour enregistrer les changements 
+        // Utiliser un flux d'écriture pour enregistrer les changements 
         OutputStream out = new FileOutputStream ( "Clients.xlsx");
         classeur.write(out);  
         out.close();

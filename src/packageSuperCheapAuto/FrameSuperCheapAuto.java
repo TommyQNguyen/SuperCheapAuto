@@ -16,9 +16,6 @@ import javax.swing.KeyStroke;
 
 public class FrameSuperCheapAuto extends JFrame {
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -32,9 +29,6 @@ public class FrameSuperCheapAuto extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public FrameSuperCheapAuto() {
 		setBounds(100, 100, 471, 610);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,16 +53,10 @@ public class FrameSuperCheapAuto extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-
-				// Exemple de popup complexe personnalisable
 				
 				var dialog = new DialogNouveauClient(FrameSuperCheapAuto.this, "Inscription d'un nouveau client", true);
 				dialog.setLocationRelativeTo(FrameSuperCheapAuto.this);
 				dialog.setVisible(true);
-			
-
-//				getContentPane().setBackground(Color.red);
 			}
 		});
 		
@@ -77,6 +65,16 @@ public class FrameSuperCheapAuto extends JFrame {
 		menuItemFermetureSession.setAccelerator(
 				KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
 		menuOptions.add(menuItemFermetureSession);
+		menuItemFermetureSession.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				Clients.sauvegarderExcelClients();
+				Inventaire.sauvegarderExcelInventaire();
+				FrameSuperCheapAuto.this.dispose(); // Fermer l'application
+			}
+		});
 		
 		
 	}

@@ -23,9 +23,6 @@ public class PanelCommande extends JPanel {
 	private static JTextField textField_quantiteEnStock;
 	Inventaire inventaire;
 
-	/**
-	 * Create the panel.
-	 */
 	public PanelCommande() {
 		
 		setBorder(new LineBorder(new Color(0, 0, 0), 3));
