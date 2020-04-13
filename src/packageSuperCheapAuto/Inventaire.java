@@ -37,8 +37,8 @@ public class Inventaire {
 
         DataFormatter dataFormatter = new DataFormatter();
 			   
-        int nombreDeProduits = feuille.getPhysicalNumberOfRows();	//Returns the number of physically defined rows (NOT the number of rows in the sheet)
-        															//Moins 1 pour ne pas compter la rangee du titre dans le fichier Excel
+        int nombreDeProduits = feuille.getPhysicalNumberOfRows();	// Nombre de rangees definies dans le fichier Excel
+        															
         for (int i = 1; i < nombreDeProduits; i++) {
         	XSSFRow rangee = feuille.getRow(i); 					// Commence a la deuxieme rangee de la feuille pour exclure le titre
         	XSSFCell celluleCodeDuProduit  = rangee.getCell(0); 	// Valeur cellule = chercher la premiere cellule de la valeur rangee

@@ -5,9 +5,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Vector;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -58,8 +55,7 @@ public class PanelPaiement extends JPanel {
 		modele.addColumn("Quantite");
 		modele.addColumn("Prix");
 
-		// Lier le modele a la table
-		table.setModel(modele);
+		table.setModel(modele);			// Lier le modele a la table
 		
 		rdbtnPaiementComptant = new JRadioButton("Paiement comptant");
 		rdbtnPaiementComptant.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -104,12 +100,12 @@ public class PanelPaiement extends JPanel {
 		btnPayez = new JButton("Payez");
 		btnPayez.setForeground(Color.BLACK);
 		btnPayez.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnPayez.setBounds(292, 130, 133, 78);
+		btnPayez.setBounds(292, 130, 133, 67);
 		add(btnPayez);
 		
-		btnAnnulerCommande = new JButton("Annuler/Nouvelle");
+		btnAnnulerCommande = new JButton("<html>Annuler/Nouvelle<br>Commande</html>");
 		btnAnnulerCommande.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnAnnulerCommande.setBounds(292, 211, 133, 40);
+		btnAnnulerCommande.setBounds(292, 199, 133, 52);
 		add(btnAnnulerCommande);
 		
 		// L'ecouteur du bouton Achat 
@@ -117,27 +113,21 @@ public class PanelPaiement extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-			String cleProduit = (String)PanelCommande.getComboBoxArticle().getSelectedItem();	// Le produit choisi dans le JComboBox
-			int quantiteItem = Inventaire.getListe().get(cleProduit).getQteStock();				// Quantite et prix des produits dans la Hashmap
-			double prixItem = Inventaire.getListe().get(cleProduit).getPrix();	
-			final int quantiteAchetee = 1;														// Quand client ajoute un produit dans la liste
-			
-			if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(quantiteAchetee)) {	// Si le nombre de produit acheter < produit en stock,
-				modele.addRow(new Object[] {cleProduit, quantiteAchetee , prixItem});			// ajouter une ligne dans la JTable
-				PanelCommande.getTextfieldQteStock().setText(String.valueOf(quantiteItem - 1));	// Mettre a jour la quantite en stock du JTextField 
-				
-				commande.ajouterItem(new Item(cleProduit, quantiteAchetee, commande.getNumeroCommande())); // Ajouter l'item dans la commande	
-			}
-			else if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(quantiteAchetee) == false) {
-				JOptionPane.showMessageDialog(null, "Ce produit est en rupture de stock.");		// Cas ou quantite achetee > quantite en stock
-			}
 
-			// TEst pour voir si numero client et commande dans le vecteur quand clic bouton Achat
-			System.out.println("numero client: " + commande.getNumeroClient());
-			System.out.println("numero commande: " + commande.getNumeroCommande());
-			System.out.println("quantite en stock de hashmap produit: " + Inventaire.getListe().get(cleProduit).getQteStock());
-			System.out.println("nombre points Bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
+				String cleProduit = (String)PanelCommande.getComboBoxArticle().getSelectedItem();	// Le produit choisi dans le JComboBox
+				int quantiteItem = Inventaire.getListe().get(cleProduit).getQteStock();				// Quantite et prix des produits dans la Hashmap
+				double prixItem = Inventaire.getListe().get(cleProduit).getPrix();	
+				final int quantiteAchetee = 1;														// Quand client ajoute un produit dans la liste
+
+				if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(quantiteAchetee)) {	// Si le nombre de produit acheter < produit en stock,
+					modele.addRow(new Object[] {cleProduit, quantiteAchetee , prixItem});			// ajouter une ligne dans la JTable
+					PanelCommande.getTextfieldQteStock().setText(String.valueOf(quantiteItem - 1));	// Mettre a jour la quantite en stock du JTextField 
+
+					commande.ajouterItem(new Item(cleProduit, quantiteAchetee, commande.getNumeroCommande())); // Ajouter l'item dans la commande	
+				}
+				else if (Inventaire.getListe().get(cleProduit).modifierQuantiteStock(quantiteAchetee) == false) {
+					JOptionPane.showMessageDialog(null, "Ce produit est en rupture de stock.");		// Cas ou quantite achetee > quantite en stock
+				}
 			}
 		});
 		
@@ -146,14 +136,10 @@ public class PanelPaiement extends JPanel {
 		PanelBoutonsAchatTerminer.getJButtonBtnTerminer().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("nombre points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 	        	
 	        	// Ajout de Sous-total et Grand total dans la JTable
 				modele.addRow(new Object[] {"Sous-total", null , decimalFormat.format(commande.calculerSousTotal())});
 				modele.addRow(new Object[] {"Grand total", null , decimalFormat.format(commande.calculerGrandTotal())});
-				var ensembleCles = Clients.getListe().keySet();
-				for (var cle : ensembleCles) 
-					System.out.println(cle); // for amélioré, Set met en oeuvre l’interface Iterable
 			}
 		});
 		
@@ -183,15 +169,13 @@ public class PanelPaiement extends JPanel {
 				
 				if (rdbtnPaiementComptant.isSelected()) {
 
-				double montantDonneParClient = Double.parseDouble(textField_MontantDonne.getText());
-				double differenceMontantDonneRemis;
+					double montantDonneParClient = Double.parseDouble(textField_MontantDonne.getText());
+					double differenceMontantDonneRemis;
 
-				System.out.println("points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
-				
 					if (Clients.getClient(commande.getNumeroClient()).assezArgent(commande, montantDonneParClient) == true) {
-					
+
 						differenceMontantDonneRemis = Clients.getClient(commande.getNumeroClient()).payerCommandeComptant(commande, montantDonneParClient);
-						
+
 						textField_MontantRemis.setText(String.valueOf(differenceMontantDonneRemis));
 						JOptionPane.showMessageDialog(null, "Merci pour votre argent comptant!!");
 
@@ -201,7 +185,7 @@ public class PanelPaiement extends JPanel {
 					}
 				}
 				else if (rdbtnPaiementCredit.isSelected()) {
-				
+
 					if (Clients.getClient(commande.getNumeroClient()).payerCommandeCarteCredit(commande) == true) {
 						JOptionPane.showMessageDialog(null, "Merci pour votre argent!");
 					}
@@ -209,7 +193,6 @@ public class PanelPaiement extends JPanel {
 						JOptionPane.showMessageDialog(null, "Limite atteinte (2000.00$). Commande refusee.");
 					}	
 				}			
-				System.out.println("nb points bonis: " + Clients.getClient(commande.getNumeroClient()).getPointsBonis());
 			}
 		});
 		
@@ -244,5 +227,4 @@ public class PanelPaiement extends JPanel {
 		
 		commande = commandeTemporaire;
 	}
-
 }

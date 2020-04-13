@@ -84,8 +84,6 @@ public class PanelCarteDeMembre extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			setBackground(Color.PINK); // A enlever
-			
 			String cleNumeroCarteMembre = textField_numeroCarteMembre.getText();
 			
 			if (Clients.getListe().containsKey(cleNumeroCarteMembre)) {								// Si le numero de carte de membre entree existe

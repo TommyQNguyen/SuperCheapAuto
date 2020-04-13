@@ -44,8 +44,4 @@ public class Produit {
 		
 		return false;
 	}
-
-//	public void reduireQuantiteEnStock() {
-//		quantiteStock = quantiteStock - 1;
-//	}
 }
